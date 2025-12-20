@@ -15,7 +15,8 @@ public class PublishingHouse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long publishingHouseId;
+    @Column(name = "id")
+    private Long id;
 
     @NotBlank
     @Size(max = 100)

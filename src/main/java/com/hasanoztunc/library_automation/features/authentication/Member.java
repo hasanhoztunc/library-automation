@@ -29,8 +29,8 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    private Long memberId;
+    @Column(name = "id")
+    private Long id;
 
     @NotBlank
     @Size(max = 20)

@@ -1,0 +1,101 @@
+package com.hasanoztunc.library_automation.features.author;
+
+import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class AuthorServiceImpl implements AuthorService {
+
+    private final AuthorRepository authorRepository;
+    private final ModelMapper modelMapper;
+
+    public AuthorServiceImpl(
+            AuthorRepository authorRepository,
+            ModelMapper modelMapper
+    ) {
+        this.authorRepository = authorRepository;
+        this.modelMapper = modelMapper;
+    }
+
+    @Override
+    @Transactional
+    public GenericResponse<AuthorDTO> createAuthor(AuthorDTO request) {
+        var author = modelMapper.map(request, Author.class);
+
+        var savedAuthor = authorRepository.save(author);
+        var authorDTO = modelMapper.map(savedAuthor, AuthorDTO.class);
+
+        return GenericResponse.success(authorDTO);
+    }
+
+    @Override
+    public GenericResponse<List<AuthorDTO>> getAllAuthors() {
+        var authors = authorRepository.findAll();
+        var authorDTOs = authors.stream()
+                .map(author -> modelMapper.map(author, AuthorDTO.class))
+                .toList();
+
+        return GenericResponse.success(authorDTOs);
+    }
+
+    @Override
+    public GenericResponse<AuthorDTO> getAuthorById(Long id) {
+        var authorOptional = authorRepository.findById(id);
+
+        if (!authorOptional.isPresent()) {
+            return GenericResponse.fail("Author not found");
+        }
+
+        var author = authorOptional.get();
+        var authorDTO = modelMapper.map(author, AuthorDTO.class);
+
+        return GenericResponse.success(authorDTO);
+    }
+
+    @Override
+    public GenericResponse<List<AuthorDTO>> searchAuthorsByName(String name) {
+        var authors = authorRepository.findByNameContainingIgnoreCase(name);
+
+        var authorDTOs = authors.stream()
+                .map(author -> modelMapper.map(author, AuthorDTO.class))
+                .toList();
+
+        return GenericResponse.success(authorDTOs);
+    }
+
+    @Override
+    @Transactional
+    public GenericResponse<AuthorDTO> updateAuthor(Long id, AuthorDTO request) {
+        var authorOptional = authorRepository.findById(id);
+
+        if (!authorOptional.isPresent()) {
+            return GenericResponse.fail("Author not found");
+        }
+
+        var author = authorOptional.get();
+        author.setName(request.getName());
+
+        var updatedAuthor = authorRepository.save(author);
+        var authorDTO = modelMapper.map(updatedAuthor, AuthorDTO.class);
+
+        return GenericResponse.success(authorDTO);
+    }
+
+    @Override
+    @Transactional
+    public GenericResponse<Void> deleteAuthor(Long id) {
+        var authorOptional = authorRepository.findById(id);
+
+        if (!authorOptional.isPresent()) {
+            return GenericResponse.fail("Author not found");
+        }
+
+        authorRepository.deleteById(id);
+
+        return GenericResponse.success(null);
+    }
+}

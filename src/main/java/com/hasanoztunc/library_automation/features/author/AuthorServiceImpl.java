@@ -96,6 +96,6 @@ public class AuthorServiceImpl implements AuthorService {
 
         authorRepository.deleteById(id);
 
-        return GenericResponse.success(null);
+        return GenericResponse.empty();
     }
 }

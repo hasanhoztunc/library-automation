@@ -97,6 +97,6 @@ public class PublishingHouseServiceImpl implements PublishingHouseService {
 
         publishingHouseRepository.deleteById(id);
 
-        return GenericResponse.success(null);
+        return GenericResponse.empty();
     }
 }

@@ -106,4 +106,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(GenericResponse.success(loginResponse));
     }
+
+    @Override
+    public ResponseEntity<GenericResponse<Void>> logoutUser() {
+        var cookie = jwtUtilities.getCleanJwtCookie();
+
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(GenericResponse.empty());
+    }
 }

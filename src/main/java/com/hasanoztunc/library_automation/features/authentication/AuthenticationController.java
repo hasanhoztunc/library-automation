@@ -29,4 +29,9 @@ public class AuthenticationController {
     public ResponseEntity<GenericResponse<LoginResponseDTO>> loginUser(@RequestBody LoginDTO loginDTO) {
         return authenticationService.loginUser(loginDTO);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<GenericResponse<Void>> logoutUser() {
+        return authenticationService.logoutUser();
+    }
 }

@@ -21,7 +21,6 @@ final public class RoleServiceImpl implements RoleService {
         this.modelMapper = modelMapper;
     }
 
-    @Transactional
     @Override
     public RoleDTO createRole(RoleDTO roleDTO) {
         var role = modelMapper.map(roleDTO, Role.class);

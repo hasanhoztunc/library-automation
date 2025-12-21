@@ -95,6 +95,6 @@ public class LanguageServiceImpl implements LanguageService {
         }
 
         languageRepository.deleteById(id);
-        return GenericResponse.success(null);
+        return GenericResponse.empty();
     }
 }

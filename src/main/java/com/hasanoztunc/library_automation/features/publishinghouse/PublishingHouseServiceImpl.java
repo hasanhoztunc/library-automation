@@ -21,8 +21,8 @@ public class PublishingHouseServiceImpl implements PublishingHouseService {
         this.modelMapper = modelMapper;
     }
 
-    @Override
     @Transactional
+    @Override
     public GenericResponse<PublishingHouseDTO> createPublishingHouse(PublishingHouseDTO request) {
         var publishingHouse = modelMapper.map(request, PublishingHouse.class);
 
@@ -68,8 +68,8 @@ public class PublishingHouseServiceImpl implements PublishingHouseService {
         return GenericResponse.success(publishingHouseDTOs);
     }
 
-    @Override
     @Transactional
+    @Override
     public GenericResponse<PublishingHouseDTO> updatePublishingHouse(Long id, PublishingHouseDTO request) {
         var publishingHouseOptional = publishingHouseRepository.findById(id);
 
@@ -86,8 +86,8 @@ public class PublishingHouseServiceImpl implements PublishingHouseService {
         return GenericResponse.success(responseDTO);
     }
 
-    @Override
     @Transactional
+    @Override
     public GenericResponse<Void> deletePublishingHouse(Long id) {
         var publishingHouseOptional = publishingHouseRepository.findById(id);
 

@@ -21,8 +21,8 @@ public class CategoryServiceImpl implements CategoryService {
         this.modelMapper = modelMapper;
     }
 
-    @Override
     @Transactional
+    @Override
     public GenericResponse<CategoryDTO> createCategory(CategoryDTO request) {
         var category = modelMapper.map(request, Category.class);
 
@@ -64,8 +64,8 @@ public class CategoryServiceImpl implements CategoryService {
         return GenericResponse.success(categoriesDto);
     }
 
-    @Override
     @Transactional
+    @Override
     public GenericResponse<CategoryDTO> updateCategory(Long id, CategoryDTO request) {
         var categoryOpt = categoryRepository.findById(id);
 
@@ -82,8 +82,8 @@ public class CategoryServiceImpl implements CategoryService {
         return GenericResponse.success(categoryDto);
     }
 
-    @Override
     @Transactional
+    @Override
     public GenericResponse<CategoryDTO> deleteCategory(Long id) {
         var categoryOpt = categoryRepository.findById(id);
 

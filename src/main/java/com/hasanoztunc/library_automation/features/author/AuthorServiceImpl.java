@@ -21,8 +21,8 @@ public class AuthorServiceImpl implements AuthorService {
         this.modelMapper = modelMapper;
     }
 
-    @Override
     @Transactional
+    @Override
     public GenericResponse<AuthorDTO> createAuthor(AuthorDTO request) {
         var author = modelMapper.map(request, Author.class);
 
@@ -67,8 +67,8 @@ public class AuthorServiceImpl implements AuthorService {
         return GenericResponse.success(authorDTOs);
     }
 
-    @Override
     @Transactional
+    @Override
     public GenericResponse<AuthorDTO> updateAuthor(Long id, AuthorDTO request) {
         var authorOptional = authorRepository.findById(id);
 
@@ -85,8 +85,8 @@ public class AuthorServiceImpl implements AuthorService {
         return GenericResponse.success(authorDTO);
     }
 
-    @Override
     @Transactional
+    @Override
     public GenericResponse<Void> deleteAuthor(Long id) {
         var authorOptional = authorRepository.findById(id);
 

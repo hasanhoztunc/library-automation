@@ -1,10 +1,14 @@
 package com.hasanoztunc.library_automation.features.category;
 
+import com.hasanoztunc.library_automation.features.book.Book;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +18,7 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "category_id")
     private Long id;
 
     @NotBlank
@@ -25,4 +29,7 @@ public class Category {
             nullable = false
     )
     private String name;
+
+    @ManyToMany(mappedBy = "categories")
+    private Set<Book> books = new HashSet<>();
 }

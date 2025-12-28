@@ -20,7 +20,7 @@ public class PublishingHouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "publishing_house_id")
-    private Long id;
+    private Long publishingHouseId;
 
     @NotBlank
     @Size(max = 100)

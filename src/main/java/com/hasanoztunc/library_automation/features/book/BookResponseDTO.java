@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookResponseDTO {
+    private Long bookId;
     private String name;
     private Integer publishingYear;
     private LanguageDTO language;

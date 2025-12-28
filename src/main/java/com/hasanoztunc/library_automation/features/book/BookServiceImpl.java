@@ -11,9 +11,14 @@ import com.hasanoztunc.library_automation.features.languages.LanguageDTO;
 import com.hasanoztunc.library_automation.features.languages.LanguageRepository;
 import com.hasanoztunc.library_automation.features.publishinghouse.PublishingHouseDTO;
 import com.hasanoztunc.library_automation.features.publishinghouse.PublishingHouseRepository;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,6 +48,7 @@ public class BookServiceImpl implements BookService {
         this.modelMapper = modelMapper;
     }
 
+    @Transactional
     @Override
     public GenericResponse<BookResponseDTO> createBook(CreateBookDTO createBookDTO) {
         var book = new Book();
@@ -79,6 +85,7 @@ public class BookServiceImpl implements BookService {
         var savedBook = bookRepository.save(book);
 
         var responseDTO = new BookResponseDTO();
+        responseDTO.setBookId(savedBook.getBookId());
         responseDTO.setName(savedBook.getName());
         responseDTO.setPublishingYear(savedBook.getPublishingYear());
         responseDTO.setLanguage(modelMapper.map(savedBook.getLanguage(), LanguageDTO.class));
@@ -97,5 +104,57 @@ public class BookServiceImpl implements BookService {
         responseDTO.setCategories(categoriesDTO);
 
         return GenericResponse.success(responseDTO);
+    }
+
+    @Transactional
+    @Override
+    public GenericResponse<BookResponse> getAllBooks(
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortOrder
+    ) {
+        var sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        var pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        Hibernate.initialize(bookRepository.findAll(pageDetails));
+        var pageBooks = bookRepository.findAll(pageDetails);
+
+        var books = pageBooks.getContent();
+
+        var booksDTOs = books.stream().map(book -> {
+            var bookDTO = new BookResponseDTO();
+            bookDTO.setBookId(book.getBookId());
+            bookDTO.setName(book.getName());
+            bookDTO.setPublishingYear(book.getPublishingYear());
+            bookDTO.setLanguage(modelMapper.map(book.getLanguage(), LanguageDTO.class));
+            bookDTO.setPublishingHouse(modelMapper.map(book.getPublishingHouse(), PublishingHouseDTO.class));
+
+            var authorsDTO = book.getAuthors()
+                    .stream()
+                    .map(author -> modelMapper.map(author, AuthorDTO.class))
+                    .toList();
+            bookDTO.setAuthors(authorsDTO);
+
+            var categoriesDTO = book.getCategories()
+                    .stream()
+                    .map(category -> modelMapper.map(category, CategoryDTO.class))
+                    .toList();
+            bookDTO.setCategories(categoriesDTO);
+
+            return bookDTO;
+        }).toList();
+
+        var bookResponse = new BookResponse(
+                booksDTOs,
+                pageBooks.getNumber(),
+                pageBooks.getSize(),
+                pageBooks.getTotalElements(),
+                pageBooks.getTotalPages(),
+                pageBooks.isLast()
+        );
+
+        return GenericResponse.success(bookResponse);
     }
 }

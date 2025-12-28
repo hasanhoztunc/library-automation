@@ -24,4 +24,12 @@ public interface BookService {
             String sortBy,
             String sortOrder
     );
+
+    GenericResponse<Void> deleteBookById(Long bookId);
+
+    GenericResponse<Void> borrowBook(Long bookId);
+
+    GenericResponse<Void> returnBook(Long bookId);
+
+    GenericResponse<List<BookResponseDTO>> getBorrowedBooks();
 }

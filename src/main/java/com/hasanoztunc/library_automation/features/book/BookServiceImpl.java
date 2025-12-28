@@ -1,6 +1,8 @@
 package com.hasanoztunc.library_automation.features.book;
 
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import com.hasanoztunc.library_automation.features.authentication.AuthenticationUtilities;
+import com.hasanoztunc.library_automation.features.authentication.MemberRepository;
 import com.hasanoztunc.library_automation.features.author.Author;
 import com.hasanoztunc.library_automation.features.author.AuthorRepository;
 import com.hasanoztunc.library_automation.features.category.Category;
@@ -26,6 +28,8 @@ public class BookServiceImpl implements BookService {
     private final CategoryRepository categoryRepository;
     private final LanguageRepository languageRepository;
     private final PublishingHouseRepository publishingHouseRepository;
+    private final MemberRepository memberRepository;
+    private final AuthenticationUtilities authenticationUtilities;
     private final ModelMapper modelMapper;
 
     public BookServiceImpl(
@@ -34,6 +38,8 @@ public class BookServiceImpl implements BookService {
             CategoryRepository categoryRepository,
             LanguageRepository languageRepository,
             PublishingHouseRepository publishingHouseRepository,
+            MemberRepository memberRepository,
+            AuthenticationUtilities authenticationUtilities,
             ModelMapper modelMapper
     ) {
         this.bookRepository = bookRepository;
@@ -41,6 +47,8 @@ public class BookServiceImpl implements BookService {
         this.categoryRepository = categoryRepository;
         this.languageRepository = languageRepository;
         this.publishingHouseRepository = publishingHouseRepository;
+        this.memberRepository = memberRepository;
+        this.authenticationUtilities = authenticationUtilities;
         this.modelMapper = modelMapper;
     }
 
@@ -167,5 +175,106 @@ public class BookServiceImpl implements BookService {
         );
 
         return null;
+    }
+
+    @Transactional
+    @Override
+    public GenericResponse<Void> deleteBookById(Long bookId) {
+        var optionalBook = bookRepository.findById(bookId);
+
+        if (!optionalBook.isPresent()) {
+            return GenericResponse.fail("Book not found with id: " + bookId);
+        }
+
+        bookRepository.deleteById(bookId);
+
+        return GenericResponse.empty();
+    }
+
+    @Transactional
+    @Override
+    public GenericResponse<Void> borrowBook(Long bookId) {
+        var optionalBook = bookRepository.findById(bookId);
+
+        if (!optionalBook.isPresent()) {
+            return GenericResponse.fail("Book not found with id: " + bookId);
+        }
+
+        var book = optionalBook.get();
+
+        if (!book.getIsInStock()) {
+            return GenericResponse.fail("Book is currently not in stock.");
+        }
+
+        var optionalBorrowingMember = authenticationUtilities.getLoggedInMember();
+
+        if (!optionalBorrowingMember.isPresent()) {
+            return GenericResponse.fail("Forbidden. You need to be logged in to borrow a book.");
+        }
+
+        var borrowingMember = optionalBorrowingMember.get();
+
+        borrowingMember.getBorrowedBooks().add(book);
+
+        book.setBorrowedBy(borrowingMember);
+        book.setIsInStock(false);
+
+        memberRepository.save(borrowingMember);
+        bookRepository.save(book);
+
+        return GenericResponse.empty();
+    }
+
+    @Transactional
+    @Override
+    public GenericResponse<Void> returnBook(Long bookId) {
+        var optionalBook = bookRepository.findById(bookId);
+
+        if (!optionalBook.isPresent()) {
+            return GenericResponse.fail("Book not found with id: " + bookId);
+        }
+
+        var book = optionalBook.get();
+
+        if (book.getIsInStock()) {
+            return GenericResponse.fail("This book is already in stock.");
+        }
+
+        var borrowingMember = book.getBorrowedBy();
+
+        if (borrowingMember == null) {
+            return GenericResponse.fail("This book is not currently borrowed by any member.");
+        }
+
+        borrowingMember.getBorrowedBooks().remove(book);
+
+        book.setBorrowedBy(null);
+        book.setIsInStock(true);
+
+        memberRepository.save(borrowingMember);
+        bookRepository.save(book);
+
+        return GenericResponse.empty();
+    }
+
+    @Transactional
+    @Override
+    public GenericResponse<List<BookResponseDTO>> getBorrowedBooks() {
+        var optionalBorrowedMember = authenticationUtilities.getLoggedInMember();
+
+        if (!optionalBorrowedMember.isPresent()) {
+            return GenericResponse.fail("Forbidden. You need to be logged in to view borrowed books.");
+        }
+
+        var borrowedMember = optionalBorrowedMember.get();
+
+        var borrowedBooks = borrowedMember.getBorrowedBooks();
+
+        var borrowedBooksDTOs = borrowedBooks
+                .stream()
+                .map(book -> modelMapper.map(book, BookResponseDTO.class))
+                .toList();
+
+        return GenericResponse.success(borrowedBooksDTOs);
     }
 }

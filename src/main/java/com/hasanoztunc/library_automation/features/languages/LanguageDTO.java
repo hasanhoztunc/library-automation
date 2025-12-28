@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LanguageDTO {
-    private String id;
+    private String languageId;
     private String name;
 }

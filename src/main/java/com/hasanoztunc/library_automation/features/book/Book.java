@@ -22,7 +22,7 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
-    private Long id;
+    private Long bookId;
 
     @NotBlank
     @Size(max = 255)
@@ -35,11 +35,11 @@ public class Book {
     @Column(name = "is_in_stock")
     private Boolean isInStock = true;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "language_id")
     private Language language;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "publishing_house_id")
     private PublishingHouse publishingHouse;
 
@@ -70,4 +70,17 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<Category> categories = new HashSet<>();
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(bookId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return java.util.Objects.equals(bookId, book.bookId);
+    }
 }

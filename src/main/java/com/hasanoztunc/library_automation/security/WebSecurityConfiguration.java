@@ -75,6 +75,7 @@ public class WebSecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/authors/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/publishing-houses/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/languages/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated());
 

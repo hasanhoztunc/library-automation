@@ -49,7 +49,7 @@ public class UserDetailsImpl implements UserDetails {
                 .toList();
 
         return new UserDetailsImpl(
-                member.getId(),
+                member.getMemberId(),
                 member.getUsername(),
                 member.getEmail(),
                 member.getFullName(),

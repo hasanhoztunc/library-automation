@@ -14,4 +14,14 @@ public interface BookService {
             String sortBy,
             String sortOrder
     );
+
+    GenericResponse<BookResponseDTO> getBookById(Long bookId);
+
+    GenericResponse<BookResponse> searchBooksByName(
+            String name,
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortOrder
+    );
 }

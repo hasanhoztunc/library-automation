@@ -2,14 +2,10 @@ package com.hasanoztunc.library_automation.features.book;
 
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
 import com.hasanoztunc.library_automation.features.author.Author;
-import com.hasanoztunc.library_automation.features.author.AuthorDTO;
 import com.hasanoztunc.library_automation.features.author.AuthorRepository;
 import com.hasanoztunc.library_automation.features.category.Category;
-import com.hasanoztunc.library_automation.features.category.CategoryDTO;
 import com.hasanoztunc.library_automation.features.category.CategoryRepository;
-import com.hasanoztunc.library_automation.features.languages.LanguageDTO;
 import com.hasanoztunc.library_automation.features.languages.LanguageRepository;
-import com.hasanoztunc.library_automation.features.publishinghouse.PublishingHouseDTO;
 import com.hasanoztunc.library_automation.features.publishinghouse.PublishingHouseRepository;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
@@ -84,24 +80,7 @@ public class BookServiceImpl implements BookService {
 
         var savedBook = bookRepository.save(book);
 
-        var responseDTO = new BookResponseDTO();
-        responseDTO.setBookId(savedBook.getBookId());
-        responseDTO.setName(savedBook.getName());
-        responseDTO.setPublishingYear(savedBook.getPublishingYear());
-        responseDTO.setLanguage(modelMapper.map(savedBook.getLanguage(), LanguageDTO.class));
-        responseDTO.setPublishingHouse(modelMapper.map(savedBook.getPublishingHouse(), PublishingHouseDTO.class));
-
-        var authorsDTO = savedBook.getAuthors()
-                .stream()
-                .map(author -> modelMapper.map(author, AuthorDTO.class))
-                .toList();
-        responseDTO.setAuthors(authorsDTO);
-
-        var categoriesDTO = savedBook.getCategories()
-                .stream()
-                .map(category -> modelMapper.map(category, CategoryDTO.class))
-                .toList();
-        responseDTO.setCategories(categoriesDTO);
+        var responseDTO = modelMapper.map(savedBook, BookResponseDTO.class);
 
         return GenericResponse.success(responseDTO);
     }
@@ -123,28 +102,10 @@ public class BookServiceImpl implements BookService {
 
         var books = pageBooks.getContent();
 
-        var booksDTOs = books.stream().map(book -> {
-            var bookDTO = new BookResponseDTO();
-            bookDTO.setBookId(book.getBookId());
-            bookDTO.setName(book.getName());
-            bookDTO.setPublishingYear(book.getPublishingYear());
-            bookDTO.setLanguage(modelMapper.map(book.getLanguage(), LanguageDTO.class));
-            bookDTO.setPublishingHouse(modelMapper.map(book.getPublishingHouse(), PublishingHouseDTO.class));
-
-            var authorsDTO = book.getAuthors()
-                    .stream()
-                    .map(author -> modelMapper.map(author, AuthorDTO.class))
-                    .toList();
-            bookDTO.setAuthors(authorsDTO);
-
-            var categoriesDTO = book.getCategories()
-                    .stream()
-                    .map(category -> modelMapper.map(category, CategoryDTO.class))
-                    .toList();
-            bookDTO.setCategories(categoriesDTO);
-
-            return bookDTO;
-        }).toList();
+        var booksDTOs = books
+                .stream()
+                .map(book -> modelMapper.map(book, BookResponseDTO.class))
+                .toList();
 
         var bookResponse = new BookResponse(
                 booksDTOs,
@@ -156,5 +117,55 @@ public class BookServiceImpl implements BookService {
         );
 
         return GenericResponse.success(bookResponse);
+    }
+
+    @Transactional
+    @Override
+    public GenericResponse<BookResponseDTO> getBookById(Long bookId) {
+        var optionalBook = bookRepository.findById(bookId);
+
+        if (!optionalBook.isPresent()) {
+            return GenericResponse.fail("Book not found with id: " + bookId);
+        }
+
+        var book = optionalBook.get();
+
+        var bookDTO = modelMapper.map(book, BookResponseDTO.class);
+
+        return GenericResponse.success(bookDTO);
+    }
+
+    @Transactional
+    @Override
+    public GenericResponse<BookResponse> searchBooksByName(
+            String name,
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortOrder
+    ) {
+        var sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        var pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        var pageBooks = bookRepository.findByNameContainingIgnoreCase(name, pageDetails);
+
+        var books = pageBooks.getContent();
+
+        var booksDTOs = books
+                .stream()
+                .map(book -> modelMapper.map(book, BookResponseDTO.class))
+                .toList();
+
+        var bookResponse = new BookResponse(
+                booksDTOs,
+                pageBooks.getNumber(),
+                pageBooks.getSize(),
+                pageBooks.getTotalElements(),
+                pageBooks.getTotalPages(),
+                pageBooks.isLast()
+        );
+
+        return null;
     }
 }

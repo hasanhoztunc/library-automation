@@ -10,4 +10,8 @@ import lombok.NoArgsConstructor;
 public class AuthorDTO {
     private Long authorId;
     private String name;
+
+    public AuthorDTO(String name) {
+        this.name = name;
+    }
 }

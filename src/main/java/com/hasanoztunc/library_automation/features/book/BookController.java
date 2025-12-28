@@ -35,4 +35,24 @@ public class BookController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{bookId}")
+    public ResponseEntity<GenericResponse<BookResponseDTO>> getBookById(@PathVariable Long bookId) {
+        var response = bookService.getBookById(bookId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<GenericResponse<BookResponse>> searchBooksByName(
+            @RequestParam String name,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_SIZE) Integer pageSize,
+            @RequestParam(defaultValue = PaginationConstants.BOOK_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.SORT_ORDER) String sortOrder
+    ) {
+        var response = bookService.searchBooksByName(name, pageNumber, pageSize, sortBy, sortOrder);
+
+        return ResponseEntity.ok(response);
+    }
 }

@@ -10,4 +10,8 @@ import lombok.NoArgsConstructor;
 public class PublishingHouseDTO {
     private Long publishingHouseId;
     private String name;
+
+    public PublishingHouseDTO(String name) {
+        this.name = name;
+    }
 }

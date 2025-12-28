@@ -17,6 +17,7 @@ public class BookResponseDTO {
     private Long bookId;
     private String name;
     private Integer publishingYear;
+    private Boolean isInStock;
     private LanguageDTO language;
     private PublishingHouseDTO publishingHouse;
     private List<AuthorDTO> authors;

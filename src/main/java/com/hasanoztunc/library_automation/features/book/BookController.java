@@ -55,4 +55,32 @@ public class BookController {
 
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{bookId}")
+    public ResponseEntity<GenericResponse<Void>> deleteBookById(@PathVariable Long bookId) {
+        var response = bookService.deleteBookById(bookId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/borrow/{bookId}")
+    public ResponseEntity<GenericResponse<Void>> borrowBook(@PathVariable Long bookId) {
+        var response = bookService.borrowBook(bookId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/return/{bookId}")
+    public ResponseEntity<GenericResponse<Void>> returnBook(@PathVariable Long bookId) {
+        var response = bookService.returnBook(bookId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/borrowed")
+    public ResponseEntity<GenericResponse<List<BookResponseDTO>>> getBorrowedBooks() {
+        var response = bookService.getBorrowedBooks();
+
+        return ResponseEntity.ok(response);
+    }
 }

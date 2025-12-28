@@ -1,5 +1,6 @@
 package com.hasanoztunc.library_automation.features.book;
 
+import com.hasanoztunc.library_automation.features.authentication.Member;
 import com.hasanoztunc.library_automation.features.author.Author;
 import com.hasanoztunc.library_automation.features.category.Category;
 import com.hasanoztunc.library_automation.features.languages.Language;
@@ -56,6 +57,10 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "publishing_house_id")
     private PublishingHouse publishingHouse;
+
+    @ManyToOne
+    @JoinColumn(name = "borrowed_by_member_id")
+    private Member borrowedBy;
 
     @ManyToMany(
             cascade = {

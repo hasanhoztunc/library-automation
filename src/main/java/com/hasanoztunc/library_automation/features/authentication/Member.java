@@ -1,5 +1,7 @@
 package com.hasanoztunc.library_automation.features.authentication;
 
+import com.hasanoztunc.library_automation.features.book.Book;
+import com.hasanoztunc.library_automation.features.languages.Language;
 import com.hasanoztunc.library_automation.features.role.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -73,6 +75,16 @@ public class Member {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToMany(
+            mappedBy = "borrowedBy",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            fetch = FetchType.EAGER
+    )
+    private Set<Book> borrowedBooks = new HashSet<>();
 
     @ToString.Exclude
     @ManyToMany(

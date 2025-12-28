@@ -7,7 +7,10 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,6 +30,17 @@ public class Language {
     @Size(max = 100)
     @Column(name = "name")
     private String name;
+
+    @Column(
+            name = "created_at",
+            updatable = false
+    )
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "language", fetch = FetchType.LAZY)
     private Set<Book> books = new HashSet<>();

@@ -1,6 +1,7 @@
 package com.hasanoztunc.library_automation.features.publishinghouse;
 
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponse;
 
 import java.util.List;
 
@@ -17,4 +18,12 @@ public interface PublishingHouseService {
     GenericResponse<PublishingHouseDTO> updatePublishingHouse(Long id, PublishingHouseDTO request);
 
     GenericResponse<Void> deletePublishingHouse(Long id);
+
+    GenericResponse<BookResponse> getBooksByPublishingHouseId(
+            Long publishingHouseId,
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortOrder
+    );
 }

@@ -1,7 +1,11 @@
 package com.hasanoztunc.library_automation.features.author;
 
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponseDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,5 +101,34 @@ public class AuthorServiceImpl implements AuthorService {
         authorRepository.deleteById(id);
 
         return GenericResponse.empty();
+    }
+
+    @Override
+    public GenericResponse<BookResponse> getBooksByAuthorId(
+            Long authorId,
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortOrder
+    ) {
+        var sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        var pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        var pageBooks = authorRepository.findBooksByAuthorId(authorId, pageDetails);
+
+        var bookDTOs = pageBooks.getContent().stream()
+                .map(book -> modelMapper.map(book, BookResponseDTO.class))
+                .toList();
+
+        var bookResponse = new BookResponse();
+        bookResponse.setBooks(bookDTOs);
+        bookResponse.setPageNumber(pageBooks.getNumber());
+        bookResponse.setPageSize(pageBooks.getSize());
+        bookResponse.setTotalElements(pageBooks.getTotalElements());
+        bookResponse.setTotalPages(pageBooks.getTotalPages());
+        bookResponse.setLastPage(pageBooks.isLast());
+
+        return GenericResponse.success(bookResponse);
     }
 }

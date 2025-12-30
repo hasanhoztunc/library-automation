@@ -1,6 +1,7 @@
 package com.hasanoztunc.library_automation.features.languages;
 
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponse;
 
 import java.util.List;
 
@@ -17,4 +18,12 @@ public interface LanguageService {
     GenericResponse<LanguageDTO> updateLanguage(Long id, LanguageDTO request);
 
     GenericResponse<Void> deleteLanguage(Long id);
+
+    GenericResponse<BookResponse> getBooksByLanguageId(
+            Long languageId,
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortOrder
+    );
 }

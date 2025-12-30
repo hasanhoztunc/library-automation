@@ -1,10 +1,14 @@
 package com.hasanoztunc.library_automation.features.author;
 
+import com.hasanoztunc.library_automation.common.constans.PaginationConstants;
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/authors")
@@ -33,6 +37,19 @@ public class AuthorController {
     @GetMapping("/{id}")
     public ResponseEntity<GenericResponse<AuthorDTO>> getAuthorById(@PathVariable Long id) {
         var response = authorService.getAuthorById(id);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/books")
+    public ResponseEntity<GenericResponse<BookResponse>> getBooksByAuthorId(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_SIZE) Integer pageSize,
+            @RequestParam(defaultValue = PaginationConstants.BOOK_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.SORT_ORDER) String sortOrder
+    ) {
+        var response = authorService.getBooksByAuthorId(id, pageNumber, pageSize, sortBy, sortOrder);
 
         return ResponseEntity.ok(response);
     }

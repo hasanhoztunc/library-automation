@@ -1,11 +1,17 @@
 package com.hasanoztunc.library_automation.features.publishinghouse;
 
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponseDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PublishingHouseServiceImpl implements PublishingHouseService {
@@ -66,6 +72,37 @@ public class PublishingHouseServiceImpl implements PublishingHouseService {
                 .toList();
 
         return GenericResponse.success(publishingHouseDTOs);
+    }
+
+    @Override
+    public GenericResponse<BookResponse> getBooksByPublishingHouseId(
+            Long publishingHouseId,
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortOrder
+    ) {
+        var sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        var pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        var pageBooks = publishingHouseRepository.findBooksByPublishingHouseId(publishingHouseId, pageDetails);
+
+        var books = pageBooks.getContent();
+
+        var bookDTOs = books.stream()
+                .map(book -> modelMapper.map(book, BookResponseDTO.class))
+                .toList();
+
+        var bookResponse = new BookResponse();
+        bookResponse.setBooks(bookDTOs);
+        bookResponse.setPageNumber(pageBooks.getNumber());
+        bookResponse.setPageSize(pageBooks.getSize());
+        bookResponse.setTotalElements(pageBooks.getTotalElements());
+        bookResponse.setTotalPages(pageBooks.getTotalPages());
+        bookResponse.setLastPage(pageBooks.isLast());
+
+        return GenericResponse.success(bookResponse);
     }
 
     @Transactional

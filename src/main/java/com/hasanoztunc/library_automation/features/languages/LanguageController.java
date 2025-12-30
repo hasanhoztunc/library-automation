@@ -1,6 +1,8 @@
 package com.hasanoztunc.library_automation.features.languages;
 
+import com.hasanoztunc.library_automation.common.constans.PaginationConstants;
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +42,19 @@ public class LanguageController {
     @GetMapping("/search")
     public ResponseEntity<GenericResponse<List<LanguageDTO>>> searchLanguagesByName(@RequestParam String name) {
         var response = languageService.searchLanguagesByName(name);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{languageId}/books")
+    public ResponseEntity<GenericResponse<BookResponse>> getBooksByLanguageId(
+            @PathVariable Long languageId,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_SIZE) Integer pageSize,
+            @RequestParam(defaultValue = PaginationConstants.BOOK_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.SORT_ORDER) String sortOrder
+    ) {
+        var response = languageService.getBooksByLanguageId(languageId, pageNumber, pageSize, sortBy, sortOrder);
 
         return ResponseEntity.ok(response);
     }

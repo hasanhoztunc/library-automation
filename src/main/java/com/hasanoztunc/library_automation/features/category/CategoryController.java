@@ -1,6 +1,8 @@
 package com.hasanoztunc.library_automation.features.category;
 
+import com.hasanoztunc.library_automation.common.constans.PaginationConstants;
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +41,24 @@ public class CategoryController {
     public ResponseEntity<GenericResponse<List<CategoryDTO>>> searchCategoriesByName(@RequestParam String name) {
         var categories = categoryService.searchCategoriesByName(name);
         return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping("/{categoryId}/books")
+    public ResponseEntity<GenericResponse<BookResponse>> getBooksByCategoryId(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_SIZE) Integer pageSize,
+            @RequestParam(defaultValue = PaginationConstants.BOOK_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.SORT_ORDER) String sortOrder
+    ) {
+        var books = categoryService.getBooksByCategoryId(
+                categoryId,
+                pageNumber,
+                pageSize,
+                sortBy,
+                sortOrder
+        );
+        return ResponseEntity.ok(books);
     }
 
     @PutMapping("/{id}")

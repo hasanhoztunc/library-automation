@@ -1,10 +1,14 @@
 package com.hasanoztunc.library_automation.features.publishinghouse;
 
+import com.hasanoztunc.library_automation.common.constans.PaginationConstants;
 import com.hasanoztunc.library_automation.common.payload.GenericResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponse;
+import com.hasanoztunc.library_automation.features.book.BookResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/publishing-houses")
@@ -40,6 +44,19 @@ public class PublishingHouseController {
     @GetMapping("/search")
     public ResponseEntity<GenericResponse<List<PublishingHouseDTO>>> searchPublishingHousesByName(@RequestParam String name) {
         var response = publishingHouseService.searchPublishingHousesByName(name);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/books")
+    public ResponseEntity<GenericResponse<BookResponse>> getBooksByPublishingHouseId(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(defaultValue = PaginationConstants.PAGE_SIZE) Integer pageSize,
+            @RequestParam(defaultValue = PaginationConstants.BOOK_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.SORT_ORDER) String sortOrder
+    ) {
+        var response = publishingHouseService.getBooksByPublishingHouseId(id, pageNumber, pageSize, sortBy, sortOrder);
 
         return ResponseEntity.ok(response);
     }

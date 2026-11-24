@@ -64,7 +64,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if (!jwtService.checkIsTokenExpired(token)) {
+            if (jwtService.checkIsTokenExpired(token)) {
                 throw new BaseException(new ErrorMessage(MessageType.TOKEN_IS_EXPIRED, null));
             }
 

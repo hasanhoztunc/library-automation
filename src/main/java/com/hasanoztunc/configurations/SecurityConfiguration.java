@@ -41,6 +41,10 @@ public class SecurityConfiguration {
                         request
                                 .requestMatchers(AUTHENTICATE, REGISTER, H2_CONSOLE).permitAll()
 
+                                // Loan endpoints
+                                .requestMatchers(HttpMethod.POST, "/rest/api/book/*/borrow").hasAnyRole("USER", "LIBRARIAN", "ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/rest/api/book/*/return").hasAnyRole("LIBRARIAN", "ADMIN")
+
                                 // Book Endpoints
                                 .requestMatchers(HttpMethod.GET, "/rest/api/book/**").hasAnyRole("USER", "LIBRARIAN", "ADMIN")
                                 .requestMatchers("/rest/api/book/**").hasRole("ADMIN")

@@ -10,5 +10,6 @@ import org.springframework.stereotype.Component;
 public class ApplicationProperties {
 
     private String secretKey;
+    private int maxLoanCount;
     private Admin admin;
 }

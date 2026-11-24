@@ -4,6 +4,7 @@ import com.hasanoztunc.dtos.authentication.AuthenticationRequest;
 import com.hasanoztunc.dtos.authentication.AuthenticationResponse;
 import com.hasanoztunc.dtos.authentication.RegisterResponse;
 import com.hasanoztunc.enumerations.MessageType;
+import com.hasanoztunc.enumerations.Role;
 import com.hasanoztunc.exceptions.BaseException;
 import com.hasanoztunc.exceptions.ErrorMessage;
 import com.hasanoztunc.repositories.UserRepository;
@@ -61,7 +62,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         RegisterResponse registerResponse = new RegisterResponse();
         registerResponse.setUsername(savedUser.getUsername());
 
-        return null;
+        return registerResponse;
     }
 
     // endregion
@@ -112,6 +113,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = new User();
 
         user.setUsername(authenticationRequest.getUsername());
+        user.getRoles().add(Role.USER);
 
         String encryptedPassword = bCryptPasswordEncoder.encode(authenticationRequest.getPassword());
         user.setPassword(encryptedPassword);

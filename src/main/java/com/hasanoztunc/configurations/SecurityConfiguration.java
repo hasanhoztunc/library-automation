@@ -4,6 +4,7 @@ import com.hasanoztunc.security.jwt.JWTAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -39,6 +40,13 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request ->
                         request
                                 .requestMatchers(AUTHENTICATE, REGISTER, H2_CONSOLE).permitAll()
+
+                                // Book Endpoints
+                                .requestMatchers(HttpMethod.GET, "/rest/api/book/**").hasAnyRole("USER", "LIBRARIAN", "ADMIN")
+                                .requestMatchers("/rest/api/book/**").hasRole("ADMIN")
+
+                                // User endpoints
+                                .requestMatchers("/rest/api/user/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(handling ->

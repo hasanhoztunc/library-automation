@@ -12,5 +12,4 @@ public class DtoBook extends BaseDto {
 
     private String name;
     private String author;
-    private boolean isAvailable;
 }

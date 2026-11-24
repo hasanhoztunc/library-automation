@@ -39,7 +39,6 @@ public class BookServiceImpl implements BookService {
 
         book.setName(dtoBookIU.getName());
         book.setAuthor(dtoBookIU.getAuthor());
-        book.setAvailable(true);
 
         Book savedBook = bookRepository.save(book);
 
@@ -47,7 +46,6 @@ public class BookServiceImpl implements BookService {
         dtoBook.setId(savedBook.getId());
         dtoBook.setName(savedBook.getName());
         dtoBook.setAuthor(savedBook.getAuthor());
-        dtoBook.setAvailable(savedBook.isAvailable());
         dtoBook.setCreatedAt(savedBook.getCreatedAt());
 
         return dtoBook;
@@ -64,7 +62,6 @@ public class BookServiceImpl implements BookService {
                     dtoBook.setId(book.getId());
                     dtoBook.setName(book.getName());
                     dtoBook.setAuthor(book.getAuthor());
-                    dtoBook.setAvailable(book.isAvailable());
                     dtoBook.setCreatedAt(book.getCreatedAt());
 
                     return dtoBook;
@@ -90,7 +87,6 @@ public class BookServiceImpl implements BookService {
         dtoBook.setId(book.getId());
         dtoBook.setName(book.getName());
         dtoBook.setAuthor(book.getAuthor());
-        dtoBook.setAvailable(book.isAvailable());
         dtoBook.setCreatedAt(book.getCreatedAt());
 
         return dtoBook;
@@ -125,7 +121,6 @@ public class BookServiceImpl implements BookService {
         dtoBook.setId(updatedBook.getId());
         dtoBook.setName(updatedBook.getName());
         dtoBook.setAuthor(updatedBook.getAuthor());
-        dtoBook.setAvailable(updatedBook.isAvailable());
         dtoBook.setCreatedAt(updatedBook.getCreatedAt());
 
         return dtoBook;

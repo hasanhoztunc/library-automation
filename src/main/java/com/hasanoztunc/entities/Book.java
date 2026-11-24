@@ -28,7 +28,4 @@ public class Book extends BaseEntity {
 
     @Column(name = "author")
     private String author;
-
-    @Column(name = "is_available")
-    private boolean isAvailable;
 }
